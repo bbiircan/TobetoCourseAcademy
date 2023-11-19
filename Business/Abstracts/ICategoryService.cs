@@ -11,5 +11,7 @@ namespace Business.Abstracts
     {
         void Add(Category category);
         List<Category> GetAll();
+        List<Category> GetAllByCategoryId(int Id);
+        List<Category> GetAllInstructorId(int Id);
     }
 }

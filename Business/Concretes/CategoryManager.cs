@@ -5,6 +5,7 @@ using Entities.Concretes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,14 +31,33 @@ namespace Business.Concretes
         //    Console.WriteLine(course1.Name + " Eklendi.");
         //}
 
+        public void Add(Course course1)
+        {
+            Console.WriteLine(course1.Name + " Eklendi.");
+        }
         public void Add(Category category)
         {
             _categoryDal.Add(category);
         }
 
+        public List<Category> GetAll(Expression<Func<Category, bool>> filter = null)
+        {
+            return _categoryDal.GetAll(filter);
+        }
+
         public List<Category> GetAll()
         {
             return _categoryDal.GetAll();
+        }
+
+        public List<Category> GetAllByCategoryId(int Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Category> GetAllInstructorId(int Id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

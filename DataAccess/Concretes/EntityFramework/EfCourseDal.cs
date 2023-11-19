@@ -1,6 +1,7 @@
-﻿using DataAccess.Abstracts;
-using Entities.Abstracts;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstracts;
 using Entities.Concretes;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,52 +12,31 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concretes.EntityFramework
 {
-    public class EfCourseDal : ICourseDal
+    public class EfCourseDal : EfEntityRepositoryBase<Course, AcademyContext>, ICourseDal
     {
-        public void Add(Course entity)
-        {
-            using(AcademyContext context=new AcademyContext()) 
-            {
-                var addedEntity=context.Entry(entity);
-                addedEntity.State = EntityState.Added;
-                context.SaveChanges();
-            }
-        }
-
-        public void Delete(Course entity)
+        public List<CourseDetailDto> GetCourseDetails()
         {
             using (AcademyContext context = new AcademyContext())
             {
-                var deletedEntity = context.Entry(entity);
-                deletedEntity.State = EntityState.Deleted;
-                context.SaveChanges();
-            }
-        }
+                var result = from c in context.Courses
+                             join ca in context.Categories
+                             on c.Id equals ca.Id
+                             join i in context.Instructors
+                             on c.Id equals i.Id
+                             select new CourseDetailDto
+                             {
+                                 Id = c.Id,
+                                 CategoryName = ca.Name,
+                                 InstructorName = i.Name,
+                                 Title = c.Title,
+                                 Name = c.Name
+                             };
 
-        public Course Get(Expression<Func<Course, bool>> filter)
-        {
-            using (AcademyContext context = new AcademyContext())
-            {
-                return context.Set<Course>().SingleOrDefault(filter);
-            }
-        }
+                return result.ToList();
 
-        public List<Course> GetAll(Expression<Func<Course, bool>> filter = null)
-        {
-            using (AcademyContext context = new AcademyContext())
-            {
-                return filter == null ? context.Set<Course>().ToList() : context.Set<Course>().Where(filter).ToList();
-            }
-        }
 
-        public void Update(Course entity)
-        {
-            using (AcademyContext context = new AcademyContext())
-            {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
-                context.SaveChanges();
             }
+
         }
     }
 }
